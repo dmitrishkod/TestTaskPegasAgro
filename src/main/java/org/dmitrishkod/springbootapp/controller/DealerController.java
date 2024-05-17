@@ -18,7 +18,7 @@ import java.util.Map;
 @RequestMapping("/api/dealer")
 @AllArgsConstructor
 public class DealerController {
-    private DealerService dealerService;
+    private final DealerService dealerService;
 
     @PostMapping
     public ResponseEntity<DealerDto> createDealer(@RequestBody DealerDto dealer){

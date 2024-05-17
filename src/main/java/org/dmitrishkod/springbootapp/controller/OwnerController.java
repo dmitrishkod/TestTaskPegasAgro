@@ -19,8 +19,8 @@ import java.util.Map;
 @RequestMapping("/api/owner")
 @AllArgsConstructor
 public class OwnerController {
-    private OwnerService ownerService;
-    private CarService carService;
+    private final OwnerService ownerService;
+    private final CarService carService;
 
     /**
      * Создание нового владельца

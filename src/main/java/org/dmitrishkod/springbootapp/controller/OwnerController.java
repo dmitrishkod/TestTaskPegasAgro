@@ -39,11 +39,11 @@ public class OwnerController {
      * @return
      */
     @DeleteMapping("car/{id}")
-    public ResponseEntity deleteCar(@PathVariable Long carId, @RequestBody OwnerDto ownerDto){
+    public ResponseEntity deleteCar(@PathVariable(name = "id") Long carId, @RequestBody OwnerDto ownerDto){
         if (carService.getById(carId).isEmpty()){
             Map<String, String> response = new HashMap<>();
             response.put("message", "Машина у владельца с ID " +carId+" не найдена.");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
 
         ownerService.deleteCarById(ownerDto, carId);
@@ -57,7 +57,7 @@ public class OwnerController {
      * @return
      */
     @PutMapping("car/{id}")
-    public ResponseEntity<OwnerDto> updateCarList(@PathVariable Long carId,@RequestBody OwnerDto ownerDto){
+    public ResponseEntity<OwnerDto> updateCarList(@PathVariable(name = "id") Long carId,@RequestBody OwnerDto ownerDto){
         return ResponseEntity.ok(Owner.toDto(ownerService.updateCarList(ownerDto, carId)));
     }
 

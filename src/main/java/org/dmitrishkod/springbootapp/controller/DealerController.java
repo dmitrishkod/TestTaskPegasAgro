@@ -6,6 +6,7 @@ import org.dmitrishkod.springbootapp.model.dto.OwnerDto;
 import org.dmitrishkod.springbootapp.model.entity.Dealer;
 import org.dmitrishkod.springbootapp.model.entity.Owner;
 import org.dmitrishkod.springbootapp.service.DealerService;
+import org.dmitrishkod.springbootapp.service.OwnerService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +20,7 @@ import java.util.Map;
 @AllArgsConstructor
 public class DealerController {
     private final DealerService dealerService;
+    private final OwnerService ownerService;
 
     @PostMapping
     public ResponseEntity<DealerDto> createDealer(@RequestBody DealerDto dealer){
@@ -32,14 +34,14 @@ public class DealerController {
      * @return
      */
     @DeleteMapping("owner/{id}")
-    public ResponseEntity deleteOwner(@PathVariable Long ownerId, @RequestBody DealerDto dealerDto){
-        if (dealerService.getById(ownerId).isEmpty()){
+    public ResponseEntity deleteOwner(@PathVariable(name = "id") Long id, @RequestBody DealerDto dealerDto){
+        if (ownerService.getById(id).isEmpty()){
             Map<String, String> response = new HashMap<>();
-            response.put("message", "Владелец авто у диллера с ID " +ownerId+" не найден.");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            response.put("message", "Владелец авто у диллера с ID " +id+" не найден.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
 
-        dealerService.deleteOwnerById(dealerDto, ownerId);
+        dealerService.deleteOwnerById(dealerDto, id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
@@ -50,7 +52,7 @@ public class DealerController {
      * @return
      */
     @PutMapping("owner/{id}")
-    public ResponseEntity<DealerDto> updateOwnerList(@PathVariable Long ownerId,@RequestBody DealerDto dealerDto){
+    public ResponseEntity<DealerDto> updateOwnerList(@PathVariable(name = "id") Long ownerId,@RequestBody DealerDto dealerDto){
         return ResponseEntity.ok(Dealer.toDto(dealerService.updateOwnerList(dealerDto, ownerId)));
     }
 
@@ -58,7 +60,7 @@ public class DealerController {
      * Вызов списка всех дилеров ( у каждого также будет вызван список всех владельцев, а у них список всех машин)
      * @return
      */
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<List<DealerDto>> getAll(){
         return ResponseEntity.ok(dealerService.getAll().stream()
                 .map(Dealer::toDto)

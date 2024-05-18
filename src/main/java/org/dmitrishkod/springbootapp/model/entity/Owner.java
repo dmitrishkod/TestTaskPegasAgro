@@ -39,12 +39,21 @@ public class Owner {
     private Dealer dealer;
 
     public static OwnerDto toDto(Owner owner){
+       if (owner.getCars().isEmpty() && owner.getDealer() == null){
+           return OwnerDto.builder()
+                   .id(owner.getId())
+                   .fio(owner.getFio())
+                   .phone(owner.getPhone())
+                   .mail(owner.getMail())
+                   .dealer(owner.getDealer().getName())
+                   .build();
+       }
         return OwnerDto.builder()
                 .id(owner.getId())
                 .fio(owner.getFio())
                 .phone(owner.getPhone())
                 .mail(owner.getMail())
-                .carDtos(owner.getCars().stream().map(Car::toDto).toList())
+                .cars(owner.getCars().stream().map(Car::toDto).toList())
                 .dealer(owner.getDealer().getName())
                 .build();
     }

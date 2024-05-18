@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.dmitrishkod.springbootapp.model.dto.CarDto;
 import org.dmitrishkod.springbootapp.model.dto.Coordinate;
 import org.dmitrishkod.springbootapp.model.entity.Car;
+import org.dmitrishkod.springbootapp.model.entity.Owner;
 import org.dmitrishkod.springbootapp.repository.CarRepository;
 import org.dmitrishkod.springbootapp.repository.OwnerRepository;
 import org.dmitrishkod.springbootapp.service.CarService;
@@ -27,8 +28,13 @@ public class CarServiceImpl implements CarService {
         car.setNumber(carDto.getNumber());
         car.setDate(carDto.getDate());
 
-        if (carDto.getOwnerFio() != null)
-            ownerRepository.findByFio(carDto.getOwnerFio());
+        if (carDto.getOwnerFio() != null){
+            Owner owner = ownerRepository.findByFio(carDto.getOwnerFio());
+            if (owner != null){
+                car.setOwner(owner);
+            }
+        }
+
 
         carRepository.save(car);
 

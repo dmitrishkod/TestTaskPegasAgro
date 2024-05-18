@@ -3,6 +3,7 @@ package org.dmitrishkod.springbootapp.service.Impl;
 import lombok.AllArgsConstructor;
 import org.dmitrishkod.springbootapp.model.dto.OwnerDto;
 import org.dmitrishkod.springbootapp.model.entity.Car;
+import org.dmitrishkod.springbootapp.model.entity.Dealer;
 import org.dmitrishkod.springbootapp.model.entity.Owner;
 import org.dmitrishkod.springbootapp.repository.CarRepository;
 import org.dmitrishkod.springbootapp.repository.DealerRepository;
@@ -29,12 +30,20 @@ public class OwnerServiceImpl implements OwnerService {
         owner.setMail(ownerDto.getMail());
         owner.setPhone(ownerDto.getPhone());
 
-        if (ownerDto.getDealer() != null)
-            owner.setDealer(dealerRepository.findByName(ownerDto.getDealer()));
+        if (ownerDto.getDealer() != null){
+            Dealer dealer = dealerRepository.findByName(ownerDto.getDealer());
+            if (dealer != null){
+                owner.setDealer(dealer);
+                ownerRepository.save(owner);
+            }else{
+                ownerRepository.save(owner);
+                owner.setDealer(new Dealer());
+            }
+        }
 
         owner.setCars(new ArrayList<>()); // Cars не подвязываем, так как изначально мы их не знаем и в таске не сказано, что их нужно создавать в месте
 
-        ownerRepository.save(owner);
+
 
         return owner;
     }
@@ -46,6 +55,10 @@ public class OwnerServiceImpl implements OwnerService {
             if (car.getId().equals(carId)){
                 owner.getCars().remove(carId);
                 ownerRepository.save(owner);
+
+                Car carThis =  carRepository.findById(car.getId()).get();
+                carThis.setOwner(null);
+                carRepository.save(carThis);
             }
         }
     }
@@ -55,6 +68,10 @@ public class OwnerServiceImpl implements OwnerService {
         Owner owner = ownerRepository.findById(ownerDto.getId()).get();
         owner.getCars().add(carRepository.findById(carId).get());
         ownerRepository.save(owner);
+
+        Car carThis =  carRepository.findById(carId).get();
+        carThis.setOwner(owner);
+        carRepository.save(carThis);
         return owner;
     }
 

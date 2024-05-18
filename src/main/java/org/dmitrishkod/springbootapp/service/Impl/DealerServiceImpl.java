@@ -24,6 +24,7 @@ public class DealerServiceImpl implements DealerService {
     public Dealer create(DealerDto dealerDto) {
         Dealer dealer = new Dealer();
         dealer.setId(dealerDto.getId());
+        dealer.setName(dealerDto.getName());
         dealer.setMail(dealerDto.getMail());
         dealer.setRepresentative(dealerDto.getRepresentative());
         dealer.setOwners(new ArrayList<>()); // Owner'a не подвязываем, так как изначально мы их не знаем и в таске не сказано, что их нужно создавать в месте
@@ -43,6 +44,9 @@ public class DealerServiceImpl implements DealerService {
             if (owner.getId().equals(ownerId)){
                 dealer.getOwners().remove(ownerId);
                 dealerRepository.save(dealer);
+                Owner ownerThis = ownerRepository.findById(ownerId).get();
+                ownerThis.setDealer(null);
+                ownerRepository.save(ownerThis);
             }
         }
     }
@@ -52,6 +56,10 @@ public class DealerServiceImpl implements DealerService {
         Dealer dealer = dealerRepository.findById(dealerDto.getId()).get();
         dealer.getOwners().add(ownerRepository.findById(ownerId).get());
         dealerRepository.save(dealer);
+
+        Owner ownerThis = ownerRepository.findById(ownerId).get();
+        ownerThis.setDealer(dealer);
+        ownerRepository.save(ownerThis);
         return dealer;
     }
 

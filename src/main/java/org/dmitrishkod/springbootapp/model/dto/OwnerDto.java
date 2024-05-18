@@ -18,6 +18,6 @@ public class OwnerDto {
     private String fio;
     private String phone;
     private String mail;
-    private List<CarDto> carDtos;
+    private List<CarDto> cars;
     private String dealer;
 }

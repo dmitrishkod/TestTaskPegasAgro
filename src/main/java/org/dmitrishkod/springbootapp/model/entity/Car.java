@@ -33,6 +33,13 @@ public class Car {
     private Owner owner;
 
     public static CarDto toDto(Car car){
+        if (car.getOwner() == null){
+            return CarDto.builder()
+                    .id(car.getId())
+                    .number(car.getNumber())
+                    .date(car.getDate())
+                    .build();
+        }
         return CarDto.builder()
                 .id(car.getId())
                 .number(car.getNumber())

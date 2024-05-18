@@ -1,18 +1,14 @@
 package org.dmitrishkod.springbootapp.controller;
 
+import jakarta.servlet.annotation.MultipartConfig;
 import lombok.AllArgsConstructor;
 import org.dmitrishkod.springbootapp.model.dto.CarDto;
 import org.dmitrishkod.springbootapp.model.entity.Car;
 import org.dmitrishkod.springbootapp.service.CarService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.File;
 
 @RestController
 @AllArgsConstructor
@@ -31,7 +27,7 @@ public class CarController {
      * @return
      */
     @PostMapping("/gps")
-    public ResponseEntity<String> parseLogFile(@RequestBody MultipartFile file){
+    public ResponseEntity<String> parseLogFile(@RequestParam(value = "file", required = false) MultipartFile file){
         return ResponseEntity.ok(carService.parseLogFile(file));
     }
 }

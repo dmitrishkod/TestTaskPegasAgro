@@ -46,7 +46,7 @@ public class CarServiceImpl implements CarService {
         try {
             byte[] bytes = file.getBytes();
             String content = new String(bytes, StandardCharsets.UTF_8);
-            parts = Arrays.stream(content.split("$")).toList();
+            parts = Arrays.stream(content.split("\\$")).toList();
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -55,32 +55,54 @@ public class CarServiceImpl implements CarService {
 
         LinkedList<Coordinate> list = new LinkedList<>();
         Coordinate coordinate = new Coordinate();
-
+            int size = 0;
         for (String str: parts){
+            size++;
             if (str.startsWith("GPGGA")){
+                if (size == 703063)
+                    System.out.println(str);
                 String[] part = str.split(",");
+                if (part.length < 3)
+
+                    continue;
                 String latitude = part[2];
+                if (latitude.isEmpty()){
+                    continue;
+                }
                 double latitudeWithoutDegrees = Double.parseDouble(latitude.substring(2)); // Удаление градусов из широты
                 String longitude = part[4];
+                if (longitude.isEmpty()){
+                    continue;
+                }
                 double longitudeWithoutDegrees = Double.parseDouble(longitude.substring(3)); // Удаление градусов из долготы
                 coordinate.setLatitude(latitudeWithoutDegrees);
                 coordinate.setLongitude(longitudeWithoutDegrees);
-            } else if (str.startsWith("GNVTG")){
+            } else if (str.startsWith("GNVTG") || str.startsWith("BDVTG")){
                 String[] part = str.split(",");
+                if (part.length < 8)
+                    continue;
                 String strSpeed = part[7];
+                if (strSpeed.isEmpty()){
+                    continue;
+                }
                 double speed = Double.parseDouble(strSpeed);
-                coordinate.setSpeed(speed);
+                if (coordinate.getLatitude() != null && coordinate.getLongitude() != null){
+                    coordinate.setSpeed(speed);
+                }
             }
 
             if (coordinate.getLatitude() != null && coordinate.getLongitude() != null && coordinate.getSpeed() != null){
                 int roundedNumber = (int) Math.round(coordinate.getSpeed());
                 if (roundedNumber > 0){
                     list.add(coordinate);
-                    coordinate.setSpeed(null);
-                    coordinate.setLatitude(null);
-                    coordinate.setLongitude(null);
+                    Coordinate newCoordinate = new Coordinate();
+                    coordinate = newCoordinate;
+                } else {
+                    Coordinate newCoordinate = new Coordinate();
+                    coordinate = newCoordinate;
                 }
             }
+
         }
         Double distance = 0.0;
         Coordinate first = list.getFirst();
@@ -98,7 +120,6 @@ public class CarServiceImpl implements CarService {
             distance+= calculateDistance(second.getLatitude(),second.getLongitude(),cd.getLatitude(),cd.getLongitude());
             second = cd;
         }
-
         return Math.round(distance) + " км";
     }
 

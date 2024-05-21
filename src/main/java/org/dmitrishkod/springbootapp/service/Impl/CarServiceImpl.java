@@ -59,7 +59,7 @@ public class CarServiceImpl implements CarService {
         }
 
 
-        LinkedList<Coordinate> list = new LinkedList<>();
+        List<Coordinate> list = new ArrayList<>();
         Coordinate coordinate = new Coordinate();
             int size = 0;
         for (String str: parts){
@@ -111,7 +111,7 @@ public class CarServiceImpl implements CarService {
 
         }
         Double distance = 0.0;
-        Coordinate first = list.getFirst();
+        Coordinate first = list.get(0);
         Coordinate second = new Coordinate();
         for (Coordinate cd: list){
             if (cd.equals(first)){
